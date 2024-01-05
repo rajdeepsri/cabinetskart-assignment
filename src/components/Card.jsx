@@ -1,4 +1,20 @@
-const Card = ({ image, name, status, species, location, origin }) => {
+import { useEffect, useState } from "react";
+
+const EPISODE_URL = "https://rickandmortyapi.com/api/episode/";
+
+const Card = ({ id, image, name, status, species, location }) => {
+  const [firstSeen, setFirstSeen] = useState("");
+
+  useEffect(() => {
+    const fetchEpisode = async (EPISODE_URL) => {
+      const resp = await fetch(`${EPISODE_URL}${id}`);
+      const data = await resp.json();
+      setFirstSeen(data?.name);
+    };
+
+    fetchEpisode(EPISODE_URL);
+  }, []);
+
   const isAlive =
     status?.toLowerCase() === "alive" ? "status_green" : "status_red";
 
@@ -21,7 +37,7 @@ const Card = ({ image, name, status, species, location, origin }) => {
         </div>
         <div className="rest_info">
           <p>First seen in:</p>
-          <h4>{origin?.name}</h4>
+          <h4>{firstSeen}</h4>
         </div>
       </div>
     </div>
