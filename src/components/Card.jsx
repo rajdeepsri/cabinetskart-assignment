@@ -7,9 +7,13 @@ const Card = ({ id, image, name, status, species, location }) => {
 
   useEffect(() => {
     const fetchEpisode = async (EPISODE_URL) => {
-      const resp = await fetch(`${EPISODE_URL}${id}`);
-      const data = await resp.json();
-      setFirstSeen(data?.name);
+      try {
+        const resp = await fetch(`${EPISODE_URL}${id}`);
+        const data = await resp.json();
+        setFirstSeen(data?.name);
+      } catch (error) {
+        console.log(error);
+      }
     };
 
     fetchEpisode(EPISODE_URL);

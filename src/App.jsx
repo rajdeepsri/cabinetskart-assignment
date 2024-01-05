@@ -9,10 +9,14 @@ const App = () => {
 
   useEffect(() => {
     const fetchCharacters = async () => {
-      const resp = await fetch(API_URL);
-      const data = await resp.json();
-      setCharactersData(data.results);
-      setFilteredCharactersData(data.results);
+      try {
+        const resp = await fetch(API_URL);
+        const data = await resp.json();
+        setCharactersData(data.results);
+        setFilteredCharactersData(data.results);
+      } catch (error) {
+        console.log(error);
+      }
     };
     fetchCharacters();
   }, []);
