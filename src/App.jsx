@@ -1,41 +1,26 @@
 import { useEffect, useState } from "react";
 import Card from "./components/Card";
+import { useDebounce } from "./useDebounce";
 const API_URL = "https://rickandmortyapi.com/api/character/";
 
 const App = () => {
   const [charactersData, setCharactersData] = useState([]);
-  const [filteredCharactersData, setFilteredCharactersData] = useState([]);
   const [seachQuery, setSearchQuery] = useState("");
+  const debouncedVal = useDebounce(seachQuery, 500);
 
   useEffect(() => {
-    const fetchCharacters = async () => {
+    const fetchSearchedCharacter = async (characterName) => {
       try {
-        const resp = await fetch(API_URL);
+        const resp = await fetch(`${API_URL}?name=${characterName}`);
         const data = await resp.json();
         setCharactersData(data.results);
-        setFilteredCharactersData(data.results);
       } catch (error) {
         console.log(error);
       }
     };
-    fetchCharacters();
-  }, []);
 
-  // search logic
-  useEffect(() => {
-    let filteredData;
-    if (seachQuery === "") {
-      filteredData = charactersData;
-    } else {
-      filteredData = charactersData.filter((character) => {
-        return character.name
-          .toLowerCase()
-          .startsWith(seachQuery.toLowerCase());
-      });
-    }
-
-    setFilteredCharactersData(filteredData);
-  }, [seachQuery, charactersData]);
+    fetchSearchedCharacter(debouncedVal);
+  }, [debouncedVal]);
 
   return (
     <div className="container">
@@ -49,8 +34,8 @@ const App = () => {
         />
       </nav>
       <div className="cards_container">
-        {filteredCharactersData.length > 0 ? (
-          filteredCharactersData.map((character) => (
+        {charactersData?.length > 0 ? (
+          charactersData.map((character) => (
             <Card key={character.id} {...character} />
           ))
         ) : (
